@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Valentine Surprise ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            animation: bgColor 15s infinite alternate;
+        }
+
+        @keyframes bgColor {
+            0% { background: linear-gradient(45deg, #ff9a9e, #fad0c4);}
+            50% { background: linear-gradient(45deg, #fbc2eb, #a6c1ee);}
+            100% { background: linear-gradient(45deg, #ff9a9e, #fad0c4);}
+        }
+
+        .container {
+            background: rgba(255,255,255,0.2);
+            padding: 50px;
+            border-radius: 25px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+            position: relative;
+            max-width: 600px;
+        }
+
+        h1 { font-size: 40px; margin-bottom: 10px; }
+        p { font-size: 22px; }
+
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            margin: 15px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .yes { background-color: #ff4d6d; color: white; animation: bounce 2s infinite; }
+        .no { background-color: white; color: #ff4d6d; }
+
+        button:hover { transform: scale(1.2); }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0);}
+            50% { transform: translateY(-15px);}
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float 5s linear infinite;
+        }
+
+        @keyframes float {
+            from { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            to { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        #typedMessage {
+            font-size: 24px;
+            margin-top: 20px;
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Will You Be My Valentine? 💕</h1>
+    <p>You make my world brighter ✨</p>
+    <div id="typedMessage"></div>
+    <button class="yes" onclick="yesClick()">Yes ❤️</button>
+    <button class="no" id="noBtn">No 😢</button>
+</div>
+
+<!-- Music part -->
+<audio id="valentineSong" src="song.wav"></audio>
+
+<script>
+/* Sweet typing messages */
+const messages = [
+    "You are my sunshine 🌞",
+    "Every moment with you is magic ✨",
+    "I can’t stop smiling when I think of you 😊",
+    "You make my heart so happy 💖",
+    "Will you make me the happiest person today? 🥰"
+];
+let i = 0, j = 0, currentMessage = '', isDeleting = false;
+
+function typeMessage() {
+    const typed = document.getElementById('typedMessage');
+    if(i < messages.length){
+        if(!isDeleting){
+            currentMessage = messages[i].substring(0, j+1);
+            typed.innerHTML = currentMessage;
+            j++;
+            if(currentMessage === messages[i]){ 
+                isDeleting = true;
+                setTimeout(typeMessage, 2000); 
+                return;
+            }
+        } else {
+            currentMessage = messages[i].substring(0, j-1);
+            typed.innerHTML = currentMessage;
+            j--;
+            if(j==0){ 
+                isDeleting = false;
+                i++;
+                if(i >= messages.length) i=0;
+            }
+        }
+    }
+    setTimeout(typeMessage, 150);
+}
+typeMessage();
+
+/* Floating hearts continuously */
+function createHeart(){
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "💖";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (15 + Math.random() * 25) + "px";
+    heart.style.color = ["#ff4d6d","#ff7eb9","#ffd1dc","#ff9a9e"][Math.floor(Math.random()*4)];
+    heart.style.animationDuration = (3 + Math.random() * 4) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => { heart.remove(); }, 5000);
+}
+setInterval(createHeart, 300);
+
+/* YES BUTTON - big images appear one by one + music */
+function yesClick(){
+    // Play the music
+    const song = document.getElementById("valentineSong");
+    song.play();
+
+    // Show YAY message
+    document.body.innerHTML = "<h1 style='color:white;font-size:50px; text-align:center; margin-top:50px;'>YAYYYY ❤️🥰</h1><p style='font-size:24px; text-align:center;'>You just made my heart very happy 💖</p>";
+
+    const imageFiles = ["photo1.jpeg","photo2.jpeg","photo3.jpeg"]; // update with your image names
+
+    function showNextImage(){
+        const img = document.createElement("img");
+        img.src = imageFiles[Math.floor(Math.random()*imageFiles.length)];
+        img.style.position = "absolute";
+        img.style.width = "300px";   // Big image size
+        img.style.height = "auto";
+        img.style.left = Math.random() * (window.innerWidth - 300) + "px";
+        img.style.top = Math.random() * (window.innerHeight - 300) + "px";
+        img.style.transition = "opacity 1s";
+        document.body.appendChild(img);
+
+        // Fade out after 3 seconds
+        setTimeout(() => { 
+            img.style.opacity = 0;
+            setTimeout(()=>{ img.remove(); }, 1000);
+        }, 3000);
+
+        // Show next image after 3 seconds
+        setTimeout(showNextImage, 3000);
+    }
+
+    showNextImage();
+}
+
+/* MOVING NO BUTTON */
+const noBtn = document.getElementById("noBtn");
+noBtn.addEventListener("mouseover", () => {
+    const x = Math.random() * (window.innerWidth - 150);
+    const y = Math.random() * (window.innerHeight - 100);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+});
+</script>
+</body>
+</html>
